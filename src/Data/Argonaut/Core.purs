@@ -56,7 +56,10 @@ import Data.Maybe (Maybe(..))
 import Data.Either (Either(..))
 import Data.StrMap as M
 import Data.Tuple (Tuple)
-import Data.Generic (class Generic, toSpine, fromSpine, GenericSignature (SigProd))
+import Data.Array as Array
+import Data.Generic
+  (class Generic, toSpine, fromSpine, GenericSignature (SigProd), GenericSpine (SProd))
+import Type.Proxy (Proxy (..))
 
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -93,16 +96,23 @@ foreign import data JNull :: Type
 -- | ordinary JavaScript booleans, strings, arrays, objects, etc.
 newtype Json = Json String
 
-derive instance genericJson :: Generic Json
+-- derive instance genericJson :: Generic Json
 
--- instance genericJson :: Generic Json where
---   toSpine x = toSpine (show x)
---   toSignature x = SigProd "Json" []
---   fromSpine x = case fromSpine x of
---     Just s -> case jsonParser s of
---       Left _ -> Nothing
---       Right y -> Just y
---     _ -> Nothing
+instance genericJson :: Generic Json where
+  toSpine x = SProd "Data.Argonaut.Core.Json" [ \_ -> toSpine (show x) ]
+  toSignature Proxy = SigProd "Data.Argonaut.Core.Json"
+    [ { sigConstructor: "Data.Argonaut.Core.Json", sigValues: [] } ]
+  fromSpine x = case x of
+    SProd typ ns
+      | typ == "Data.Argonaut.Core.Json" -> case Array.head ns of
+        Just y -> case fromSpine (y unit) of
+          Just x' -> case jsonParser x' of
+            Left _ -> Nothing
+            Right y' -> Just y'
+          _ -> Nothing
+        _ -> Nothing
+      | otherwise -> Nothing
+    _ -> Nothing
 
 -- | Case analysis for `Json` values. See the README for more information.
 foldJson
