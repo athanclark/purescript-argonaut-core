@@ -56,7 +56,7 @@ import Data.Maybe (Maybe(..))
 import Data.Either (Either(..))
 import Data.StrMap as M
 import Data.Tuple (Tuple)
-import Data.Generic (class Generic, GenericSpine (SString), GenericSignature (SigProd))
+import Data.Generic (class Generic, toSpine, fromSpine, GenericSignature (SigProd))
 
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -93,10 +93,10 @@ foreign import data JNull :: Type
 -- | ordinary JavaScript booleans, strings, arrays, objects, etc.
 foreign import data Json :: Type
 instance genericJson :: Generic Json where
-  toSpine x = SString (show x)
+  toSpine x = toSpine (show x)
   toSignature x = SigProd "Json" []
-  fromSpine x = case x of
-    SString s -> case jsonParser s of
+  fromSpine x = case fromSpine x of
+    Just s -> case jsonParser s of
       Left _ -> Nothing
       Right y -> Just y
     _ -> Nothing
