@@ -91,15 +91,18 @@ foreign import data JNull :: Type
 -- | The type of JSON data. The underlying representation is the same as what
 -- | would be returned from JavaScript's `JSON.parse` function; that is,
 -- | ordinary JavaScript booleans, strings, arrays, objects, etc.
-foreign import data Json :: Type
-instance genericJson :: Generic Json where
-  toSpine x = toSpine (show x)
-  toSignature x = SigProd "Json" []
-  fromSpine x = case fromSpine x of
-    Just s -> case jsonParser s of
-      Left _ -> Nothing
-      Right y -> Just y
-    _ -> Nothing
+newtype Json = Json String
+
+derive instance genericJson :: Generic Json
+
+-- instance genericJson :: Generic Json where
+--   toSpine x = toSpine (show x)
+--   toSignature x = SigProd "Json" []
+--   fromSpine x = case fromSpine x of
+--     Just s -> case jsonParser s of
+--       Left _ -> Nothing
+--       Right y -> Just y
+--     _ -> Nothing
 
 -- | Case analysis for `Json` values. See the README for more information.
 foldJson
