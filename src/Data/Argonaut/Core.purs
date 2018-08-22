@@ -46,15 +46,17 @@ module Data.Argonaut.Core
   , jsonEmptyObject
   , jsonSingletonObject
   , stringify
+  , jsonParser
   ) where
 
 import Prelude
 
-import Data.Function.Uncurried (Fn5, runFn5, Fn7, runFn7)
+import Data.Function.Uncurried (Fn3, runFn3, Fn5, runFn5, Fn7, runFn7)
 import Data.Maybe (Maybe(..))
+import Data.Either (Either(..))
 import Data.StrMap as M
 import Data.Tuple (Tuple)
-import Data.Generic (class Generic)
+import Data.Generic (class Generic, GenericSpine (SString), GenericSignature (SigProd))
 
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -84,16 +86,20 @@ type JAssoc = Tuple String Json
 -- | The type of null values inside JSON data. There is exactly one value of
 -- | this type: in JavaScript, it is written `null`. This module exports this
 -- | value as `jsonNull`.
-newtype JNull = JNull Void
--- foreign import data JNull :: Type
-derive instance genericJNull :: Generic JNull
+foreign import data JNull :: Type
 
 -- | The type of JSON data. The underlying representation is the same as what
 -- | would be returned from JavaScript's `JSON.parse` function; that is,
 -- | ordinary JavaScript booleans, strings, arrays, objects, etc.
-newtype Json = Json Void
--- foreign import data Json :: Type
-derive instance genericJson :: Generic Json
+foreign import data Json :: Type
+instance genericJson :: Generic Json where
+  toSpine x = SString (show x)
+  toSignature x = SigProd "Json" []
+  fromSpine x = case x of
+    SString s -> case jsonParser s of
+      Left _ -> Nothing
+      Right y -> Just y
+    _ -> Nothing
 
 -- | Case analysis for `Json` values. See the README for more information.
 foldJson
@@ -266,3 +272,11 @@ foreign import _foldJson
       z
 
 foreign import _compare :: Fn5 Ordering Ordering Ordering Json Json Ordering
+
+
+-- Parser
+
+foreign import _jsonParser :: forall a. Fn3 (String -> a) (Json -> a) String a
+
+jsonParser :: String -> Either String Json
+jsonParser j = runFn3 _jsonParser Left Right j
