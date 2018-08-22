@@ -54,6 +54,7 @@ import Data.Function.Uncurried (Fn5, runFn5, Fn7, runFn7)
 import Data.Maybe (Maybe(..))
 import Data.StrMap as M
 import Data.Tuple (Tuple)
+import Data.Generic (class Generic)
 
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -83,12 +84,16 @@ type JAssoc = Tuple String Json
 -- | The type of null values inside JSON data. There is exactly one value of
 -- | this type: in JavaScript, it is written `null`. This module exports this
 -- | value as `jsonNull`.
-foreign import data JNull :: Type
+newtype JNull = JNull Void
+-- foreign import data JNull :: Type
+derive instance genericJNull :: Generic JNull
 
 -- | The type of JSON data. The underlying representation is the same as what
 -- | would be returned from JavaScript's `JSON.parse` function; that is,
 -- | ordinary JavaScript booleans, strings, arrays, objects, etc.
-foreign import data Json :: Type
+newtype Json = Json Void
+-- foreign import data Json :: Type
+derive instance genericJson :: Generic Json
 
 -- | Case analysis for `Json` values. See the README for more information.
 foldJson
