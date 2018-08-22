@@ -4,8 +4,7 @@ import Prelude
 
 import Control.Monad.Eff.Console (log)
 
-import Data.Argonaut.Core (Json, JNull, toObject, toArray, toString, toNumber, toBoolean, toNull, fromObject, foldJsonObject, fromNumber, fromArray, foldJsonArray, fromString, foldJsonString, foldJsonNumber, fromBoolean, foldJsonBoolean, fromNull, foldJsonNull, foldJson, isObject, isArray, isString, isNumber, isBoolean, isNull, stringify)
-import Data.Argonaut.Parser (jsonParser)
+import Data.Argonaut.Core (Json, JNull, jsonParser, toObject, toArray, toString, toNumber, toBoolean, toNull, fromObject, foldJsonObject, fromNumber, fromArray, foldJsonArray, fromString, foldJsonString, foldJsonNumber, fromBoolean, foldJsonBoolean, fromNull, foldJsonNull, foldJson, isObject, isArray, isString, isNumber, isBoolean, isNull, stringify)
 import Data.Argonaut.Gen (genJson)
 import Data.Array as A
 import Data.Either (isLeft, Either(..))
