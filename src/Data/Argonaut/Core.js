@@ -65,8 +65,8 @@ exports._compare = function _compare (EQ, GT, LT, a, b) {
           // var c = new Intl.Collator();
           var x_ = Buffer.from(x,'utf8');
           var y_ = Buffer.from(y,'utf8');
-          console.log("some bs:", x, y, x === y, x_, y_, x_ === y_);
-          return x_ === y_;
+          console.log("some bs:", x, y, x === y, x_, y_, x_.equals(y_));
+          return x_.equals(y_);
         } else {
           return x === y;
         }
