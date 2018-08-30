@@ -61,10 +61,12 @@ exports._compare = function _compare (EQ, GT, LT, a, b) {
     if (typeof b === "string") {
       // console.log("some bs:", a, b, a === b, JSON.stringify(a), JSON.stringify(b), JSON.stringify(a) === JSON.stringify(b));
       var stringEq = function stringEq(x,y) {
-        if (Intl.Collator !== undefined) {
-          var c = new Intl.Collator();
-          console.log("some bs:", x, y, x === y, c.compare(x,y));
-          return c.compare(x,y) === 0;
+        if (Buffer !== undefined) {
+          // var c = new Intl.Collator();
+          var x_ = Buffer.from(x,'utf8');
+          var y_ = Buffer.from(y,'utf8');
+          console.log("some bs:", x, y, x === y, x_, y_, x_ === y_);
+          return x_ === y_;
         } else {
           return x === y;
         }
