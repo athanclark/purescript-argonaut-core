@@ -59,8 +59,15 @@ exports._compare = function _compare (EQ, GT, LT, a, b) {
     else return LT;
   } else if (typeof a === "string") {
     if (typeof b === "string") {
-      console.log("some bs:", a, b, a === b, JSON.stringify(a), JSON.stringify(b), JSON.stringify(a) === JSON.stringify(b));
-      if (a === b) return EQ;
+      // console.log("some bs:", a, b, a === b, JSON.stringify(a), JSON.stringify(b), JSON.stringify(a) === JSON.stringify(b));
+      var stringEq = function stringEq(x,y) {
+        if (String.prototype.localeCompare !== undefined) {
+          return x.localeCompare(y) === 0;
+        } else {
+          return x === y;
+        }
+      };
+      if (stringEq(a,b)) return EQ;
       else if (a < b) return LT;
       else return GT;
     } else if (b == null) return GT;
